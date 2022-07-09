@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2022-07-09T22:27:38Z"
+  name: elephant
+  namespace: default
+  resourceVersion: "998"
+  uid: a40e69f1-989d-46b2-8c91-42e0618a93b0
+spec:
+  containers:
+  - args:
+    - --vm
+    - "1"
+    - --vm-bytes
+    - 15M
+    - --vm-hang
+    - "1"
+    command:
+    - stress
+    image: polinux/stress
+    imagePullPolicy: Always
+    name: mem-stress
+    resources:
+      limits:
+        memory: 20Mi
+      requests:
+        memory: 5Mi
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-4tc2g
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: controlplane
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-4tc2g
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2022-07-09T22:27:38Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2022-07-09T22:29:10Z"
+    message: 'containers with unready status: [mem-stress]'
+    reason: ContainersNotReady
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2022-07-09T22:29:10Z"
+    message: 'containers with unready status: [mem-stress]'
+    reason: ContainersNotReady
+    status: "False"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2022-07-09T22:27:38Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://ab00fbc630cce5c49c2532b253fdabf2c5bee45b141e45bef19a5c661d627855
+    image: docker.io/polinux/stress:latest
+    imageID: docker.io/polinux/stress@sha256:b6144f84f9c15dac80deb48d3a646b55c7043ab1d83ea0a697c09097aaad21aa
+    lastState:
+      terminated:
+        containerID: containerd://21f57d66250d3e48bf385e7ed7aa7349d6528dbffde83a2b876cef1efa218de1
+        exitCode: 1
+        finishedAt: "2022-07-09T22:29:09Z"
+        reason: OOMKilled
+        startedAt: "2022-07-09T22:29:09Z"
+    name: mem-stress
+    ready: false
+    restartCount: 5
+    started: false
+    state:
+      terminated:
+        containerID: containerd://ab00fbc630cce5c49c2532b253fdabf2c5bee45b141e45bef19a5c661d627855
+        exitCode: 1
+        finishedAt: "2022-07-09T22:30:35Z"
+        reason: OOMKilled
+        startedAt: "2022-07-09T22:30:35Z"
+  hostIP: 172.25.0.22
+  phase: Running
+  podIP: 10.42.0.10
+  podIPs:
+  - ip: 10.42.0.10
+  qosClass: Burstable
+  startTime: "2022-07-09T22:27:38Z"
